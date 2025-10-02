@@ -55,14 +55,25 @@ public class WebSecurityConfig {
     // ===== CORS configuration =====
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://websiteanalytics.vercel.app")); // frontend URL
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        // Existing config for general paths
+        CorsConfiguration generalConfig = new CorsConfiguration();
+        generalConfig.setAllowedOrigins(List.of("https://websiteanalytics.vercel.app")); // Keep your frontend
+        generalConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        generalConfig.setAllowedHeaders(List.of("*"));
+        generalConfig.setAllowCredentials(true);
+
+
+        CorsConfiguration trackingConfig = new CorsConfiguration();
+        trackingConfig.setAllowedOrigins(List.of("*")); // Allows any embedding site
+        trackingConfig.setAllowedMethods(List.of("POST", "OPTIONS")); // Only what's needed for tracking
+        trackingConfig.setAllowedHeaders(List.of("Content-Type")); // Minimal headers
+        trackingConfig.setAllowCredentials(false); // No credentials for public tracking
+        trackingConfig.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", generalConfig); // General paths
+        source.registerCorsConfiguration("/track/**", trackingConfig); // Tracking-specific
         return source;
     }
+
 }
