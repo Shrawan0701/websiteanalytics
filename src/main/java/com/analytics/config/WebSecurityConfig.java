@@ -29,8 +29,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Lambda style, avoids deprecation
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow all OPTIONS
                         .requestMatchers("/auth/**", "/track/**", "/tracking.js").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/websites/**").authenticated()
                         .requestMatchers("/websites/**").authenticated()
