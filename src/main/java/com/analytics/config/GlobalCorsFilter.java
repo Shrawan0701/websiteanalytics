@@ -3,11 +3,15 @@ package com.analytics.config;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
 public class GlobalCorsFilter implements Filter {
+
+    @Value("${CORS_ALLOWED_ORIGINS}")
+    private String allowedOrigins;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -16,7 +20,7 @@ public class GlobalCorsFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        res.setHeader("Access-Control-Allow-Origin", "https://websiteanalytics.vercel.app");
+        res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization");
         res.setHeader("Access-Control-Allow-Credentials", "true");
